@@ -46,6 +46,10 @@ func main() {
 	http.HandleFunc("/secret", handlers.Secret(store))
 	http.HandleFunc("/user/signup", handlers.SignUp(store, &myOrm))
 	http.HandleFunc("/user/login", handlers.Login(store, &myOrm))
+	http.HandleFunc("/user/search/bookname", handlers.SearchBookName(store, &myOrm))
+	http.HandleFunc("/user/search/category", handlers.SearchCategory(store, &myOrm))
+	http.HandleFunc("/user/issue", handlers.Issue(store, &myOrm))
+	http.HandleFunc("/user/return", handlers.Return(store, &myOrm))
 	http.HandleFunc("/admin/addbook", handlers.AddBook(store, &myOrm))
 
 	http.HandleFunc("/logout", handlers.Logout(store))

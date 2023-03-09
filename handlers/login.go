@@ -20,11 +20,11 @@ func Login(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
 		var u models.Users
 		err = json.Unmarshal(body, &u)
 		if err != nil {
-			utility.RespondWithError(500, "thet", &w)
+			utility.Respond(500, "thet", &w,false)
 		}
 		err = u.InsertToDB(myOrm)
 		if err != nil {
-			utility.RespondWithError(500, "some more error", &w)
+			utility.Respond(500, "some more error", &w,false)
 		}
 		
 		session, _ := store.Get(r, "cookie-name")
