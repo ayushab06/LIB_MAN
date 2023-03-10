@@ -8,10 +8,9 @@ import (
 	"net/http"
 
 	"github.com/beego/beego/orm"
-	"github.com/gorilla/sessions"
 )
 
-func Return(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
+func Return(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -26,8 +25,5 @@ func Return(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
 		if err != nil {
 			utility.Respond(500, "some more error", &w, false)
 		}
-		session, _ := store.Get(r, "cookie-name")
-		session.Values["authenticated"] = true
-		session.Save(r, w)
 	}
 }

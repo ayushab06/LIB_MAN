@@ -8,11 +8,14 @@ import (
 	"net/http"
 
 	"github.com/beego/beego/orm"
-	"github.com/gorilla/sessions"
 )
 
-func SearchCategory(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
+func SearchCategory(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		status:=utility.AuthToken(w,r)
+		if !status{
+			return
+		}
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			panic(err)
@@ -24,10 +27,7 @@ func SearchCategory(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerF
 		}
 		err = b.InsertToDB(myOrm)
 		if err != nil {
-			utility.Respond(500, "some more error", &w, false)
+			utility.Respond(http.StatusInternalServerError, "some more error", &w, false)
 		}
-		session, _ := store.Get(r, "cookie-name")
-		session.Values["authenticated"] = true
-		session.Save(r, w)
 	}
 }

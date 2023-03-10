@@ -11,13 +11,10 @@ import (
 	"github.com/beego/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-
-	"github.com/gorilla/sessions"
 )
 
 var (
 	key   []byte
-	store = sessions.NewCookieStore(key)
 )
 
 func init() {
@@ -26,7 +23,6 @@ func init() {
 		return
 	}
 	key = []byte(os.Getenv("ENC_KEY"))
-	//fmt.Println(key)
 	port := os.Getenv("DB_PORT")
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
@@ -43,15 +39,12 @@ func init() {
 }
 func main() {
 	myOrm := orm.NewOrm()
-	http.HandleFunc("/secret", handlers.Secret(store))
-	http.HandleFunc("/user/signup", handlers.SignUp(store, &myOrm))
-	http.HandleFunc("/user/login", handlers.Login(store, &myOrm))
-	http.HandleFunc("/user/search/bookname", handlers.SearchBookName(store, &myOrm))
-	http.HandleFunc("/user/search/category", handlers.SearchCategory(store, &myOrm))
-	http.HandleFunc("/user/issue", handlers.Issue(store, &myOrm))
-	http.HandleFunc("/user/return", handlers.Return(store, &myOrm))
-	http.HandleFunc("/admin/addbook", handlers.AddBook(store, &myOrm))
-
-	http.HandleFunc("/logout", handlers.Logout(store))
+	http.HandleFunc("/user/register", handlers.Register(&myOrm))
+	http.HandleFunc("/user/login", handlers.Login(&myOrm))
+	http.HandleFunc("/user/search/bookname", handlers.SearchBookName(&myOrm))
+	http.HandleFunc("/user/search/category", handlers.SearchCategory(&myOrm))
+	http.HandleFunc("/user/issue", handlers.Issue(&myOrm))
+	http.HandleFunc("/user/return", handlers.Return(&myOrm))
+	http.HandleFunc("/admin/addbook", handlers.AddBook(&myOrm))
 	http.ListenAndServe(":8080", nil)
 }

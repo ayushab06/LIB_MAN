@@ -6,6 +6,10 @@ import (
 	"github.com/beego/beego/orm"
 )
 
+type BookRequest struct {
+	Id       int
+	Quantity int
+}
 type Books struct {
 	Id              int    `orm:"column(id);auto"`
 	Book_name       string `orm:"column(book_name);null"`
@@ -15,6 +19,7 @@ type Books struct {
 	Remaining_stock int    `orm:"column(remaining_stock);null"`
 	Price           int    `orm:"column(price);null"`
 }
+
 
 func init() {
 	orm.RegisterModel(new(Books))
@@ -29,14 +34,14 @@ func (b *Books) InsertToDB(myOrm *orm.Ormer) error {
 }
 
 func GetBookByName(key_word string, myOrm *orm.Ormer) (b []Books, err error) {
-	if _, err = (*myOrm).QueryTable(new(Books)).Filter("book_name__icontains", key_word).All(&b); err != nil {
+	if _, err = (*myOrm).QueryTable(new(Books)).Filter("book_name__icontains", key_word).Exclude("remaining_stock",0).All(&b); err != nil {
 		return
 	}
 	return
 }
 
 func GetBookByCategory(key_word string, myOrm *orm.Ormer) (b []Books, err error) {
-	if _, err = (*myOrm).QueryTable(new(Books)).Filter("category_name__icontains", key_word).All(&b); err != nil {
+	if _, err = (*myOrm).QueryTable(new(Books)).Filter("category_name__icontains", key_word).Exclude("remaining_stock",0).All(&b); err != nil {
 		return
 	}
 	return

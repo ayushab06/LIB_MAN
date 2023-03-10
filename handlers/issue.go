@@ -6,28 +6,31 @@ import (
 	"lib_man/models"
 	"lib_man/utility"
 	"net/http"
+	"time"
 
 	"github.com/beego/beego/orm"
-	"github.com/gorilla/sessions"
 )
 
-func Issue(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
+func Issue(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		status := utility.AuthToken(w, r)
+		if !status {
+			return
+		}
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			panic(err)
 		}
-		var b models.Books
-		err = json.Unmarshal(body, &b)
+		var currBook models.Bookings
+		err = json.Unmarshal(body, &currBook)
 		if err != nil {
 			panic(err)
 		}
-		err = b.InsertToDB(myOrm)
+		currBook.Issue_date = time.Now()
+		currBook.Status=true
+		err = currBook.InsertToDB(myOrm)
 		if err != nil {
-			utility.Respond(500, "some more error", &w,false)
+			utility.Respond(500, "some more error", &w, false)
 		}
-		session, _ := store.Get(r, "cookie-name")
-		session.Values["authenticated"] = true
-		session.Save(r, w)
 	}
 }

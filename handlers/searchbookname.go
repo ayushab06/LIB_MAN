@@ -9,12 +9,12 @@ import (
 	"net/http"
 
 	"github.com/beego/beego/orm"
-	"github.com/gorilla/sessions"
 )
 
-func SearchBookName(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
+func SearchBookName(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !utility.CheckStatus(store, w, r) {
+		status := utility.AuthToken(w, r)
+		if !status {
 			return
 		}
 		body, err := ioutil.ReadAll(r.Body)
@@ -30,7 +30,6 @@ func SearchBookName(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerF
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("there is a boy in this office  %s", s.Key_word)
 		books, err := models.GetBookByName(s.Key_word, myOrm)
 		if err != nil {
 			fmt.Println("there was some error with parsing")

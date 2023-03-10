@@ -3,32 +3,45 @@ package handlers
 import (
 	"encoding/json"
 	"io/ioutil"
-	"lib_man/models"
 	"lib_man/utility"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/beego/beego/orm"
-	"github.com/gorilla/sessions"
+	"github.com/joho/godotenv"
 )
 
-func Login(store *sessions.CookieStore, myOrm *orm.Ormer) http.HandlerFunc {
+func Login(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			panic(err)
+			utility.Respond(http.StatusBadRequest, "wrong format", &w, false)
+			return
 		}
-		var u models.Users
-		err = json.Unmarshal(body, &u)
+		type loginS struct {
+			Password string
+		}
+		var l loginS
+		err = json.Unmarshal(body, &l)
 		if err != nil {
-			utility.Respond(500, "thet", &w,false)
+			utility.Respond(http.StatusBadRequest, "wrong format", &w, false)
+			return
 		}
-		err = u.InsertToDB(myOrm)
-		if err != nil {
-			utility.Respond(500, "some more error", &w,false)
+		err = godotenv.Load()
+		pass := os.Getenv("LIB_MAN_PASS")
+		if l.Password == pass {
+			str, _ := utility.GenerateToken()
+			cookie := http.Cookie{
+				Name:    "token",
+				Value:   str,
+				Expires: time.Now().Add(time.Hour * 8),
+			}
+			http.SetCookie(w, &cookie)
+			return
+		} else {
+			utility.Respond(http.StatusBadRequest, "wrong password", &w, false)
+			return
 		}
-		
-		session, _ := store.Get(r, "cookie-name")
-		session.Values["authenticated"] = true
-		session.Save(r, w)
 	}
 }

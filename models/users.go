@@ -11,7 +11,7 @@ type Users struct {
 	First_name string `orm:"column(first_name);null"`
 	Last_name  string `orm:"column(last_name);null"`
 	Email      string `orm:"column(email);null"`
-	Password   string `orm:"column(password);null"`
+	Mobile     string `orm:"column(mobile);null"`
 }
 
 func init() {
@@ -24,4 +24,18 @@ func (u *Users) InsertToDB(myOrm *orm.Ormer) error {
 		log.Fatal("Error in Insert: ", err)
 	}
 	return err
+}
+
+func GetUserByEmail(email string) ([]Users, error) {
+	o := orm.NewOrm()
+	var users []Users
+	_, err := o.QueryTable("users").Filter("email", email).All(&users)
+	return users, err
+}
+
+func GetUserByMobile(mobile string) int {
+	o := orm.NewOrm()
+	var user Users
+	o.QueryTable("users").Filter("mobile", mobile).One(&user)
+	return user.Id
 }
