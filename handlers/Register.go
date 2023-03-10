@@ -29,6 +29,7 @@ func Register(myOrm *orm.Ormer) http.HandlerFunc {
 		err = u.InsertToDB(myOrm)
 		if err != nil {
 			utility.Respond(http.StatusInternalServerError, "something wrong at our end", &w, false)
+			return
 		}
 	}
 }

@@ -26,3 +26,7 @@ func (booking *Bookings) InsertToDB(myOrm *orm.Ormer) error {
 	}
 	return err
 }
+func GetBooking(u_id int, b_id int, myOrm *orm.Ormer) (b Bookings) {
+	(*myOrm).QueryTable(new(Bookings)).Filter("user_id", u_id).Filter("book_id", b_id).Filter("status", 1).One(&b)
+	return b
+}

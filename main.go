@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"lib_man/handlers"
-
-	//"lib_man/models"
 	"net/http"
 	"os"
 
@@ -14,7 +12,7 @@ import (
 )
 
 var (
-	key   []byte
+	key []byte
 )
 
 func init() {
@@ -40,11 +38,11 @@ func init() {
 func main() {
 	myOrm := orm.NewOrm()
 	http.HandleFunc("/user/register", handlers.Register(&myOrm))
-	http.HandleFunc("/user/login", handlers.Login(&myOrm))
-	http.HandleFunc("/user/search/bookname", handlers.SearchBookName(&myOrm))
-	http.HandleFunc("/user/search/category", handlers.SearchCategory(&myOrm))
-	http.HandleFunc("/user/issue", handlers.Issue(&myOrm))
-	http.HandleFunc("/user/return", handlers.Return(&myOrm))
-	http.HandleFunc("/admin/addbook", handlers.AddBook(&myOrm))
+	http.HandleFunc("/login", handlers.Login(&myOrm))
+	http.HandleFunc("/search/bookname", handlers.SearchBookName(&myOrm))
+	http.HandleFunc("/search/category", handlers.SearchCategory(&myOrm))
+	http.HandleFunc("/issue", handlers.Issue(&myOrm))
+	http.HandleFunc("/return", handlers.Return(&myOrm))
+	http.HandleFunc("/addbook", handlers.AddBook(&myOrm))
 	http.ListenAndServe(":8080", nil)
 }

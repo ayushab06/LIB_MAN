@@ -13,6 +13,7 @@ import (
 
 func Issue(myOrm *orm.Ormer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		o := (*myOrm)
 		status := utility.AuthToken(w, r)
 		if !status {
 			return
@@ -26,8 +27,12 @@ func Issue(myOrm *orm.Ormer) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		book := models.Books{Id: currBook.Book_id}
+		o.Read(&book)
+		book.Remaining_stock = book.Remaining_stock - 1
+		o.Update(&book, "remaining_stock")
 		currBook.Issue_date = time.Now()
-		currBook.Status=true
+		currBook.Status = true
 		err = currBook.InsertToDB(myOrm)
 		if err != nil {
 			utility.Respond(500, "some more error", &w, false)
