@@ -18,6 +18,12 @@ func Respond(statusCode int, message string, w *http.ResponseWriter, success boo
 	(*w).Write(data)
 }
 
+func RespondStruct(data []byte, w *http.ResponseWriter, success bool) {
+	(*w).Header().Set("Content-Type", "application/json")
+	(*w).WriteHeader(http.StatusAccepted)
+	(*w).Write(data)
+}
+
 func RespondBooks(books []models.Books, w *http.ResponseWriter, success bool) {
 	(*w).Header().Set("Content-Type", "application/json")
 	(*w).WriteHeader(http.StatusAccepted)

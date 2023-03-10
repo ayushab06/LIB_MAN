@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"lib_man/models"
 	"lib_man/utility"
+	"math"
 	"net/http"
+	"time"
 
 	"github.com/beego/beego/orm"
 )
@@ -30,10 +31,28 @@ func Return(myOrm *orm.Ormer) http.HandlerFunc {
 		o.Read(&user)
 		book.Remaining_stock = book.Remaining_stock + 1
 		bookings := models.GetBooking(b.User_id, b.Book_id, myOrm)
-		fmt.Println(bookings.Id)
+		t := time.Now().Sub(bookings.Issue_date)
 		bookings.Status = false
 		o.Update(&bookings, "status")
 		o.Update(&book, "remaining_stock")
-		utility.Respond(200, "book return was successfull", &w, true)
+		type res struct {
+			Success  bool
+			Message  string
+			Payment  int
+			Duration int
+		}
+		days := int(math.Ceil(t.Hours() / float64(24)))
+		fees := days
+		if days > 30 {
+			fees += (days - 30)
+		}
+		rp := res{
+			Success:  true,
+			Message:  "Successfull",
+			Payment:  fees,
+			Duration: days,
+		}
+		data, _ := json.Marshal(rp)
+		utility.RespondStruct(data, &w, true)
 	}
 }
