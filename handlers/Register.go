@@ -6,11 +6,9 @@ import (
 	"lib_man/models"
 	"lib_man/utility"
 	"net/http"
-
-	"github.com/beego/beego/orm"
 )
 
-func Register(myOrm *orm.Ormer) http.HandlerFunc {
+func Register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -26,7 +24,12 @@ func Register(myOrm *orm.Ormer) http.HandlerFunc {
 			utility.Respond(http.StatusBadRequest, "the email already exists", &w, false)
 			return
 		}
-		err = u.InsertToDB(myOrm)
+		users, _ = models.GetUserByMobile(u.Mobile)
+		if len(users) != 0 {
+			utility.Respond(http.StatusBadRequest, "the mobile already exists", &w, false)
+			return
+		}
+		err = u.InsertToDB()
 		if err != nil {
 			utility.Respond(http.StatusInternalServerError, "something wrong at our end", &w, false)
 			return

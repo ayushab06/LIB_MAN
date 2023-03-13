@@ -12,9 +12,12 @@ import (
 	"github.com/beego/beego/orm"
 )
 
-func Return(myOrm *orm.Ormer) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		o := (*myOrm)
+func Return(w http.ResponseWriter, r *http.Request) {
+	myOrm := orm.NewOrm()
+		status := utility.AuthToken(w, r)
+		if !status {
+			return
+		}
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			panic(err)
@@ -27,14 +30,18 @@ func Return(myOrm *orm.Ormer) http.HandlerFunc {
 		err = json.Unmarshal(body, &b)
 		book := models.Books{Id: b.Book_id}
 		user := models.Users{Id: b.User_id}
-		o.Read(&book)
-		o.Read(&user)
+		myOrm.Read(&book)
+		myOrm.Read(&user)
 		book.Remaining_stock = book.Remaining_stock + 1
-		bookings := models.GetBooking(b.User_id, b.Book_id, myOrm)
+		bookings, err := models.GetBooking(b.User_id, b.Book_id)
+		if err != nil {
+			utility.Respond(http.StatusBadRequest, err.Error(), &w, false)
+			return
+		}
 		t := time.Now().Sub(bookings.Issue_date)
 		bookings.Status = false
-		o.Update(&bookings, "status")
-		o.Update(&book, "remaining_stock")
+		myOrm.Update(&bookings, "status")
+		myOrm.Update(&book, "remaining_stock")
 		type res struct {
 			Success  bool
 			Message  string
@@ -54,5 +61,4 @@ func Return(myOrm *orm.Ormer) http.HandlerFunc {
 		}
 		data, _ := json.Marshal(rp)
 		utility.RespondStruct(data, &w, true)
-	}
 }

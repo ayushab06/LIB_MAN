@@ -34,13 +34,12 @@ func init() {
 	}
 }
 func main() {
-	myOrm := orm.NewOrm()
-	http.HandleFunc("/user/register", handlers.Register(&myOrm))
-	http.HandleFunc("/login", handlers.Login(&myOrm))
-	http.HandleFunc("/search/bookname", handlers.SearchBookName(&myOrm))
-	http.HandleFunc("/search/category", handlers.SearchCategory(&myOrm))
-	http.HandleFunc("/issue", handlers.Issue(&myOrm))
-	http.HandleFunc("/return", handlers.Return(&myOrm))
-	http.HandleFunc("/addbook", handlers.AddBook(&myOrm))
+	http.HandleFunc("/user/register", handlers.Register())
+	http.HandleFunc("/login", handlers.Login)
+	http.HandleFunc("/search/bookname", handlers.SearchBookName)
+	http.HandleFunc("/search/category", handlers.SearchCategory)
+	http.HandleFunc("/issue", handlers.Issue)
+	http.HandleFunc("/return", handlers.Return)
+	http.HandleFunc("/addbook", handlers.AddBook)
 	http.ListenAndServe(":8080", nil)
 }

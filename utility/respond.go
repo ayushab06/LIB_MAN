@@ -2,7 +2,6 @@ package utility
 
 import (
 	"encoding/json"
-	"fmt"
 	"lib_man/models"
 	"net/http"
 )
@@ -11,10 +10,7 @@ func Respond(statusCode int, message string, w *http.ResponseWriter, success boo
 	(*w).Header().Set("Content-Type", "application/json")
 	(*w).WriteHeader(http.StatusBadRequest)
 	res := models.Response{Success: success, Message: message}
-	data, err := json.Marshal(res)
-	if err != nil {
-		fmt.Println("there was some error marshalling the data")
-	}
+	data, _ := json.Marshal(res)
 	(*w).Write(data)
 }
 
@@ -30,7 +26,8 @@ func RespondBooks(books []models.Books, w *http.ResponseWriter, success bool) {
 	res := models.BookResponse{Success: success, Books: books}
 	data, err := json.Marshal(res)
 	if err != nil {
-		fmt.Println("there was some error marshalling the data")
+		Respond(http.StatusBadRequest, "Unexpected data format", w, false)
+		return
 	}
 	(*w).Write(data)
 }

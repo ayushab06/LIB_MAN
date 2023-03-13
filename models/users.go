@@ -18,8 +18,9 @@ func init() {
 	orm.RegisterModel(new(Users))
 }
 
-func (u *Users) InsertToDB(myOrm *orm.Ormer) error {
-	_, err := (*myOrm).Insert(u)
+func (u *Users) InsertToDB() error {
+	myOrm := orm.NewOrm()
+	_, err := myOrm.Insert(u)
 	if err != nil {
 		log.Fatal("Error in Insert: ", err)
 	}
@@ -33,9 +34,9 @@ func GetUserByEmail(email string) ([]Users, error) {
 	return users, err
 }
 
-func GetUserByMobile(mobile string) int {
+func GetUserByMobile(mobile string) ([]Users, error) {
 	o := orm.NewOrm()
-	var user Users
-	o.QueryTable("users").Filter("mobile", mobile).One(&user)
-	return user.Id
+	var users []Users
+	_, err := o.QueryTable("users").Filter("mobile", mobile).All(&users)
+	return users, err
 }
