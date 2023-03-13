@@ -34,5 +34,6 @@ func Register() http.HandlerFunc {
 			utility.Respond(http.StatusInternalServerError, "something wrong at our end", &w, false)
 			return
 		}
+		utility.Respond(http.StatusAccepted, "user registration was successfull", &w, true)
 	}
 }

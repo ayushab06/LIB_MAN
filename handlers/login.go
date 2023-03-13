@@ -36,6 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			Expires: time.Now().Add(time.Hour * 8),
 		}
 		http.SetCookie(w, &cookie)
+		utility.Respond(http.StatusAccepted, "login is successfull", &w, true)
 		return
 	} else {
 		utility.Respond(http.StatusBadRequest, "wrong password", &w, false)

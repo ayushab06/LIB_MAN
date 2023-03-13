@@ -41,5 +41,6 @@ func main() {
 	http.HandleFunc("/issue", handlers.Issue)
 	http.HandleFunc("/return", handlers.Return)
 	http.HandleFunc("/addbook", handlers.AddBook)
+	http.HandleFunc("/logout", handlers.Logout)
 	http.ListenAndServe(":8080", nil)
 }

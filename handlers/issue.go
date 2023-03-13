@@ -36,5 +36,5 @@ func Issue(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utility.Respond(500, "some more error", &w, false)
 	}
-
+	utility.Respond(http.StatusAccepted, "issue was successfull", &w, true)
 }
