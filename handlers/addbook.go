@@ -9,6 +9,10 @@ import (
 )
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
+	status := utility.AuthToken(w, r)
+	if !status {
+		return
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
