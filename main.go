@@ -34,6 +34,15 @@ func init() {
 	}
 }
 func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        if r.Method == "OPTIONS" {
+            return
+        }
+        w.Write([]byte("Hello, world!"))
+    })
 	http.HandleFunc("/user/register", handlers.Register)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/search", handlers.Search)
