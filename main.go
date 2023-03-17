@@ -33,16 +33,21 @@ func init() {
 		fmt.Println("there is some error:", err)
 	}
 }
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+func CorsMiddleware(next http.Handler) http.HandlerFunc {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
         if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusNoContent)
             return
         }
-        w.Write([]byte("Hello, world!"))
+        next.ServeHTTP(w, r)
     })
+}
+
+func main() {
 	http.HandleFunc("/user/register", handlers.Register)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/search", handlers.Search)

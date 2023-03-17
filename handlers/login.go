@@ -12,6 +12,7 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	utility.EnableCors(&w)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utility.Respond(http.StatusBadRequest, "wrong format", &w, false)

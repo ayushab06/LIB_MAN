@@ -47,3 +47,6 @@ func AuthToken(w http.ResponseWriter, r *http.Request) (status bool) {
 	}
 	return token.Valid
 }
+func EnableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
