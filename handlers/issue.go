@@ -28,6 +28,10 @@ func Issue(w http.ResponseWriter, r *http.Request) {
 	}
 	book := models.Books{Id: currBook.Book_id}
 	myOrm.Read(&book)
+	if book.Remaining_stock <= 0 {
+		utility.Respond(http.StatusConflict, "book is no longer available", &w, false)
+		return
+	}
 	book.Remaining_stock = book.Remaining_stock - 1
 	myOrm.Update(&book, "remaining_stock")
 	currBook.Issue_date = time.Now()

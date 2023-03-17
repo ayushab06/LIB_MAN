@@ -8,7 +8,7 @@ import (
 
 func Respond(statusCode int, message string, w *http.ResponseWriter, success bool) {
 	(*w).Header().Set("Content-Type", "application/json")
-	(*w).WriteHeader(http.StatusBadRequest)
+	(*w).WriteHeader(statusCode)
 	res := models.Response{Success: success, Message: message}
 	data, _ := json.Marshal(res)
 	(*w).Write(data)

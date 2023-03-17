@@ -33,19 +33,29 @@ func (b *Books) InsertToDB() error {
 	}
 	return err
 }
+func (b *Books) Update() error {
+	myOrm := orm.NewOrm()
+	_, err := myOrm.Update(b, "remaining_stock")
+	return err
+}
 
 func GetBookByName(key_word string) (b []Books, err error) {
 	myOrm := orm.NewOrm()
-	if _, err = (myOrm).QueryTable(new(Books)).Filter("book_name__icontains", key_word).Exclude("remaining_stock", 0).All(&b); err != nil {
-		return b, nil
+	if _, err = myOrm.QueryTable(new(Books)).Filter("book_name__icontains", key_word).Exclude("remaining_stock", 0).All(&b); err != nil {
+		return b, errors.New("No such book found")
 	}
-	return b, errors.New("No such book found")
+	return b, nil
+}
+func GetBookByExactName(key_word string) (b Books) {
+	myOrm := orm.NewOrm()
+	myOrm.QueryTable(new(Books)).Filter("book_name", key_word).One(&b)
+	return
 }
 
 func GetBookByCategory(key_word string) (b []Books, err error) {
 	myOrm := orm.NewOrm()
-	if _, err = (myOrm).QueryTable(new(Books)).Filter("category_name__icontains", key_word).Exclude("remaining_stock", 0).All(&b); err != nil {
-		return
+	if _, err = myOrm.QueryTable(new(Books)).Filter("category_name__icontains", key_word).Exclude("remaining_stock", 0).All(&b); err != nil {
+		return b, errors.New("No such book found")
 	}
-	return
+	return b, nil
 }

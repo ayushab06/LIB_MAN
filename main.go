@@ -34,10 +34,9 @@ func init() {
 	}
 }
 func main() {
-	http.HandleFunc("/user/register", handlers.Register())
+	http.HandleFunc("/user/register", handlers.Register)
 	http.HandleFunc("/login", handlers.Login)
-	http.HandleFunc("/search/bookname", handlers.SearchBookName)
-	http.HandleFunc("/search/category", handlers.SearchCategory)
+	http.HandleFunc("/search", handlers.Search)
 	http.HandleFunc("/issue", handlers.Issue)
 	http.HandleFunc("/return", handlers.Return)
 	http.HandleFunc("/addbook", handlers.AddBook)
