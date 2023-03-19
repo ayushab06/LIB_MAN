@@ -15,12 +15,14 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		panic(err)
+		utility.Respond(http.StatusBadRequest, "wrong format", &w, false)
+		return
 	}
 	var b models.Books
 	err = json.Unmarshal(body, &b)
 	if err != nil {
-		panic(err)
+		utility.Respond(http.StatusBadRequest, "wrong format", &w, false)
+		return
 	}
 	alr := models.GetBookByExactName(b.Book_name)
 	if alr.Book_name != "" {
@@ -30,8 +32,8 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 		err = b.InsertToDB()
 	}
 	if err != nil {
-		utility.Respond(500, "some error at our end", &w, false)
+		utility.Respond(http.StatusInternalServerError, "some error at our end", &w, false)
 	} else {
-		utility.Respond(200, "book added successfully", &w, true)
+		utility.Respond(http.StatusAccepted, "book added successfully", &w, true)
 	}
 }

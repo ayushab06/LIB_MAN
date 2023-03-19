@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"lib_man/utility"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
+	utility.EnableCors(&w)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utility.Respond(http.StatusBadRequest, "wrong format", &w, false)
@@ -28,6 +29,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = godotenv.Load()
+	if err != nil {
+		fmt.Println("error in reading env file")
+		utility.Respond(http.StatusInternalServerError, "Something wrong at our end", &w, false)
+	}
 	pass := os.Getenv("LIB_MAN_PASS")
 	if l.Password == pass {
 		str, _ := utility.GenerateToken()
